@@ -1,2 +1,7 @@
 pnpm-lock.yaml
 node_modules/
+tmp/
+components/*.go
+.env
+go.sum
+books.db

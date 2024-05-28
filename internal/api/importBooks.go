@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"database/sql"
@@ -31,13 +31,11 @@ func ImportTest() Book {
 
 	// Convert epockCreatedOn to time.Time
 	book.TimeCreatedOn = time.Unix(book.EpochCreatedOn, 0)
-	book.TimeCreatedOn.Format("2006-01-02 15:04:05")
-
+	book.TimeCreatedOn.Format("2006-01-02")
 	return book
 }
 
 func InsertData(book Book, db *db.DB) {
-	// Insert book data
 	insertBook := `INSERT INTO books (created_on, number_of_pages, title) VALUES (?, ?, ?)`
 	res, err := db.Exec(
 		insertBook,

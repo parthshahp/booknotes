@@ -7,19 +7,20 @@ import (
 
 templ BookTable(entries []Book) {
 	@Page() {
-		<div class="m-8">
-			<table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+		<div class="py-4">
+			<table class="border-2 min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
 				<thead class="ltr:text-left">
 					<tr>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Title</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Author(s)</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Highlights</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">Date</th>
+						<th class="whitespace-nowrap px-4 py-2 font-medium">Title</th>
+						<th class="whitespace-nowrap px-4 py-2 font-medium">Author(s)</th>
+						<th class="whitespace-nowrap px-4 py-2 font-medium">Highlights</th>
+						<th class="whitespace-nowrap px-4 py-2 font-medium">Date</th>
 						<th class="px-4 py-2"></th>
 					</tr>
 				</thead>
 				for _, entry := range entries {
-					@BookTableEntry(entry.Title, entry.Author, entry.TimeCreatedOn.String(), strconv.Itoa(len(entry.Entries)))
+					@BookTableEntry(entry.Title, entry.Author, entry.TimeCreatedOn.Format("2006-01-02"),
+						strconv.Itoa(len(entry.Entries)))
 				}
 				<tbody class="divide-y divide-gray-200"></tbody>
 			</table>
@@ -29,13 +30,13 @@ templ BookTable(entries []Book) {
 
 templ BookTableEntry(title, author, date, highlights string) {
 	<tr>
-		<td class="whitespace-nowrap px-4 py-2 text-gray-700">{ title }</td>
-		<td class="whitespace-nowrap px-4 py-2 font-medium text-gray-900">{ author }</td>
-		<td class="whitespace-nowrap px-4 py-2 text-gray-700">{ highlights }</td>
-		<td class="whitespace-nowrap px-4 py-2 text-gray-700">{ date }</td>
+		<td class="whitespace-nowrap px-4 py-2">{ title }</td>
+		<td class="whitespace-nowrap px-4 py-2">{ author }</td>
+		<td class="whitespace-nowrap px-4 py-2">{ highlights }</td>
+		<td class="whitespace-nowrap px-4 py-2">{ date }</td>
 		<td class="whitespace-nowrap px-4 py-2">
-			<a href="#" class="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">
-				View
+			<a href="#" class="btn btn-ghost rounded">
+				Edit
 			</a>
 		</td>
 	</tr>

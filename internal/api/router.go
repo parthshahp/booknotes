@@ -26,7 +26,7 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 
 func index(env *Env, db *db.DB) http.Handler {
 	env.InfoLog.Println("Serving index")
-	db.InitDB(env)
+	db.InitDB()
 	component := ui.Hello("Parth Shah")
 	return templ.Handler(component)
 }

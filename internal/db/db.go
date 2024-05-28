@@ -4,8 +4,6 @@ import (
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/parthshahp/booknotes/internal/types"
 )
 
 type DB struct {
@@ -25,8 +23,7 @@ func (db DB) CloseDB() error {
 	return db.Close()
 }
 
-func (db DB) InitDB(env *types.Env) error {
-	env.InfoLog.Println("Initializing database")
+func (db DB) InitDB() error {
 	// Create tables if they don't exist
 	createTables := `
 	CREATE TABLE IF NOT EXISTS books (
@@ -58,7 +55,7 @@ func (db DB) InitDB(env *types.Env) error {
 	);
 	`
 	if _, err := db.Exec(createTables); err != nil {
-		env.ErrorLog.Fatal(err)
+		panic(err)
 	}
 
 	return nil

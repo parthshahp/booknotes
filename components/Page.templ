@@ -22,6 +22,21 @@ templ Page() {
 
 templ Hello(name string) {
 	@Page() {
-		<p>Hello, { name }</p>
+		<div class="pt-12">Hello, { name }</div>
+	}
+}
+
+templ Import() {
+	@Page() {
+		<div class="flex justify-center items-center pt-12">
+			<form hx-post="/import" hx-target="this" hx-encoding="multipart/form-data">
+				<div>
+					<input type="file" class="file-input file-input-bordered w-full max-w-xs rounded-lg"/>
+				</div>
+				<div class="flex justify-center items-center pt-12">
+					<button class="btn btn-primary rounded-lg" type="submit">Submit</button>
+				</div>
+			</form>
+		</div>
 	}
 }

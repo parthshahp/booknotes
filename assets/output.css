@@ -8438,6 +8438,10 @@ html:has(.drawer-open.drawer-open) {
   min-width: 100%;
 }
 
+.max-w-xs {
+  max-width: 20rem;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -9613,6 +9617,10 @@ html:has(.drawer-open.drawer-open) {
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+
+.pt-12 {
+  padding-top: 3rem;
 }
 
 .text-left {

@@ -20,6 +20,7 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 
 	mux.Handle("/", index(env))
 	mux.Handle("GET /table", table(env, db))
+	mux.Handle("GET /import", importPage(env))
 	return logger(mux)
 }
 
@@ -67,4 +68,9 @@ func logger(next http.Handler) http.Handler {
 			end.Sub(start),
 		)
 	})
+}
+
+func importPage(env *Env) http.Handler {
+	env.InfoLog.Println("Serving import")
+	return templ.Handler(ui.Import())
 }

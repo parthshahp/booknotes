@@ -18,25 +18,35 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 	fs := http.FileServer(http.Dir("./assets"))
 	mux.Handle("/assets/", http.StripPrefix("/assets", fs))
 
-	mux.Handle("/", index(env, db))
-	mux.Handle("GET /table", table(env, db))
-	mux.Handle("GET /import", importPage(env))
+	mux.HandleFunc("/", index(env))
+	mux.HandleFunc("GET /table", table(env, db))
+	mux.HandleFunc("GET /import", importPage(env))
 	return logger(mux)
 }
 
-func index(env *Env, db *db.DB) http.Handler {
-	env.InfoLog.Println("Serving index")
-	db.InitDB()
-	component := ui.Hello("Parth Shah")
-	return templ.Handler(component)
+func index(env *Env) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving index")
+		component := ui.Hello("Parth Shah")
+		templ.Handler(component).ServeHTTP(w, r)
+	})
 }
 
-func table(env *Env, db *db.DB) http.Handler {
-	books := GetAllBooks(db, env)
-	env.InfoLog.Println("Serving table")
-	env.InfoLog.Println(books)
-	tableComp := ui.BookTable(books)
-	return templ.Handler(tableComp)
+func table(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		books := GetAllBooks(db, env)
+		env.InfoLog.Println("Serving table")
+		env.InfoLog.Println(books)
+		tableComp := ui.BookTable(books)
+		templ.Handler(tableComp).ServeHTTP(w, r)
+	})
+}
+
+func importPage(env *Env) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving import")
+		templ.Handler(ui.Import()).ServeHTTP(w, r)
+	})
 }
 
 func logger(next http.Handler) http.Handler {
@@ -53,9 +63,4 @@ func logger(next http.Handler) http.Handler {
 			end.Sub(start),
 		)
 	})
-}
-
-func importPage(env *Env) http.Handler {
-	env.InfoLog.Println("Serving import")
-	return templ.Handler(ui.Import())
 }

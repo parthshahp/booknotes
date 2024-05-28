@@ -118,13 +118,14 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
     b.created_on,
     b.number_of_pages,
     b.title, 
-    GROUP_CONCAT(a.name) AS authors,
+    a.authors,
     COUNT(e.id) AS entry_count
   FROM books b
   LEFT JOIN
-    book_authors ba ON b.id = ba.book_id
-  LEFT JOIN
-    authors a ON ba.author_id = a.id
+    (SELECT ba.book_id, GROUP_CONCAT(a.name) AS authors
+    FROM book_authors ba
+    JOIN authors a ON ba.author_id = a.id
+    GROUP BY ba.book_id) a ON b.id = a.book_id
   LEFT JOIN
     entries e ON b.id = e.book_id
   GROUP BY b.id
@@ -151,6 +152,8 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
 		}
 
 		authorList := strings.Split(authors, ",")
+
+		env.InfoLog.Println(authors)
 
 		book := Book{
 			ID:            bookID,

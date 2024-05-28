@@ -33,6 +33,8 @@ func main() {
 	}
 	defer db.CloseDB()
 
+	// api.InsertData(api.ImportTest(), db, &env)
+
 	c := cors.AllowAll()
 	handler := c.Handler(api.RoutesInit(&env, db))
 	server := http.Server{

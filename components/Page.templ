@@ -29,7 +29,7 @@ templ Hello(name string) {
 templ Import() {
 	@Page() {
 		<div class="flex justify-center items-center pt-12">
-			<form hx-post="/import" hx-target="this" hx-encoding="multipart/form-data">
+			<form>
 				<div>
 					<input type="file" class="file-input file-input-bordered w-full max-w-xs rounded-lg"/>
 				</div>

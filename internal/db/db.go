@@ -17,6 +17,7 @@ func OpenDB() (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &DB{db}, nil
 }
 
@@ -25,6 +26,7 @@ func (db DB) CloseDB() error {
 }
 
 func (db DB) InitDB(env *types.Env) error {
+	env.InfoLog.Println("Initializing database")
 	// Create tables if they don't exist
 	createTables := `
 	CREATE TABLE IF NOT EXISTS books (

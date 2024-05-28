@@ -121,7 +121,7 @@ func Import() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-center items-center pt-12\"><form hx-post=\"/import\" hx-target=\"this\" hx-encoding=\"multipart/form-data\"><div><input type=\"file\" class=\"file-input file-input-bordered w-full max-w-xs rounded-lg\"></div><div class=\"flex justify-center items-center pt-12\"><button class=\"btn btn-primary rounded-lg\" type=\"submit\">Submit</button></div></form></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-center items-center pt-12\"><form><div><input type=\"file\" class=\"file-input file-input-bordered w-full max-w-xs rounded-lg\"></div><div class=\"flex justify-center items-center pt-12\"><button class=\"btn btn-primary rounded-lg\" type=\"submit\">Submit</button></div></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

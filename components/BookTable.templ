@@ -3,6 +3,7 @@ package components
 import (
 	"strconv"
 	. "github.com/parthshahp/booknotes/internal/types"
+	"strings"
 )
 
 templ BookTable(entries []Book) {
@@ -19,8 +20,8 @@ templ BookTable(entries []Book) {
 					</tr>
 				</thead>
 				for _, entry := range entries {
-					@BookTableEntry(entry.Title, entry.Author, entry.TimeCreatedOn.Format("2006-01-02"),
-						strconv.Itoa(len(entry.Entries)))
+					@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
+						strconv.Itoa(entry.EntryCount))
 				}
 				<tbody class="divide-y divide-gray-200"></tbody>
 			</table>

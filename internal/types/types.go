@@ -18,11 +18,19 @@ type Entry struct {
 	Note    string `json:"note"`
 }
 
-type Book struct {
+type BookImport struct {
 	EpochCreatedOn int64   `json:"created_on"`
 	NumberOfPages  int     `json:"number_of_pages"`
 	Title          string  `json:"title"`
 	Entries        []Entry `json:"entries"`
 	Author         string  `json:"author"`
-	TimeCreatedOn  time.Time
+}
+
+type Book struct {
+	ID            int
+	TimeCreatedOn time.Time
+	NumberOfPages int
+	Title         string
+	EntryCount    int
+	Authors       []string
 }

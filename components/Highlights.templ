@@ -15,10 +15,16 @@ templ HighlightsPage(entries []Entry) {
 
 templ Highlight(chapter, text, note, page, time string) {
 	<div class="pt-12">
-		<div class="text-3xl font-bold">{ chapter }</div>
-		<div class="text-3xl font-bold">{ text }</div>
-		<div class="text-3xl font-bold">{ note }</div>
-		<div class="text-3xl font-bold">{ page }</div>
-		<div class="text-3xl font-bold">{ time }</div>
+		<div class="card w-full bg-base-100 shadow-xl">
+			<div class="card-body">
+				<h2 class="card-title">{ chapter }, Page { page }</h2>
+				<div class="italic">{ text }</div>
+				<div class="">{ note }</div>
+				<div class="">Highlighted at { time }</div>
+				<div class="card-actions justify-end">
+					<button class="btn btn-primary">Copy</button>
+				</div>
+			</div>
+		</div>
 	</div>
 }

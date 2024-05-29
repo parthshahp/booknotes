@@ -67,20 +67,24 @@ func ImportFile(env *Env, db *db.DB) http.HandlerFunc {
 			}
 			defer file.Close()
 
-			// Send to parse
 			ImportHighlightData(file, env, db)
-			// Read file contents
-			// fileContents, err := io.ReadAll(file)
-			// if err != nil {
-			// 	http.Error(w, "Unable to read file", http.StatusInternalServerError)
-			// 	env.ErrorLog.Println("Error reading file:", err)
-			// 	return
-			// }
-			// env.InfoLog.Println("File contents:", string(fileContents))
 		}
 
-		// Respond to the client
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("File uploaded successfully"))
 	}
+}
+
+func GetHighlights(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		bookID := r.PathValue("id")
+		env.InfoLog.Println("Serving highlights for book", bookID)
+		if bookID == "" {
+			http.Error(w, "No book ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("No book ID provided")
+			return
+		}
+		entries := GetBookHighlights(db, env, bookID)
+		templ.Handler(ui.HighlightsPage(entries)).ServeHTTP(w, r)
+	})
 }

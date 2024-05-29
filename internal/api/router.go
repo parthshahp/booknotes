@@ -20,6 +20,7 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 	mux.HandleFunc("GET /table", Table(env, db))
 	mux.HandleFunc("GET /import", ImportPage(env))
 	mux.HandleFunc("POST /import", ImportFile(env, db))
+	mux.HandleFunc("GET /highlights/{id}", GetHighlights(env, db))
 	return logger(mux)
 }
 

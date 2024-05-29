@@ -192,3 +192,23 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
 
 	return books
 }
+
+func GetBookHighlights(db *db.DB, env *Env, bookID string) []Entry {
+	env.InfoLog.Println("Getting highlights")
+	query := `SELECT time, page, chapter, text, note FROM entries WHERE book_id = ? ORDER BY page DESC;`
+	rows, err := db.Query(query, bookID)
+	if err != nil {
+		log.Fatalf("Failed to query entries: %s", err)
+	}
+	defer rows.Close()
+
+	var entries []Entry
+	for rows.Next() {
+		var entry Entry
+		if err := rows.Scan(&entry.Time, &entry.Page, &entry.Chapter, &entry.Text, &entry.Note); err != nil {
+			log.Fatalf("Failed to scan entry: %s", err)
+		}
+		entries = append(entries, entry)
+	}
+	return entries
+}

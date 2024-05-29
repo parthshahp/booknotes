@@ -4,6 +4,7 @@ import (
 	"strconv"
 	. "github.com/parthshahp/booknotes/internal/types"
 	"strings"
+	"fmt"
 )
 
 templ BookTable(entries []Book) {
@@ -20,16 +21,20 @@ templ BookTable(entries []Book) {
 			</thead>
 			for _, entry := range entries {
 				@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
-					strconv.Itoa(entry.EntryCount))
+					strconv.Itoa(entry.EntryCount), fmt.Sprintf("/highlights/%d", entry.ID))
 			}
 			<tbody class="divide-y divide-gray-200"></tbody>
 		</table>
 	</div>
 }
 
-templ BookTableEntry(title, author, date, highlights string) {
+templ BookTableEntry(title, author, date, highlights, id string) {
 	<tr>
-		<td class="whitespace-nowrap px-4 py-2">{ title }</td>
+		<td class="whitespace-nowrap px-4 py-2">
+			<a hx-get={ id } hx-target="#page-content" class="cursor-pointer">
+				{ title }
+			</a>
+		</td>
 		<td class="whitespace-nowrap px-4 py-2">{ author }</td>
 		<td class="whitespace-nowrap px-4 py-2">{ highlights }</td>
 		<td class="whitespace-nowrap px-4 py-2">{ date }</td>

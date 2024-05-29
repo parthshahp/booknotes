@@ -1,0 +1,24 @@
+package components
+
+import (
+	"fmt"
+	. "github.com/parthshahp/booknotes/internal/types"
+)
+
+templ HighlightsPage(entries []Entry) {
+	<div class="pt-12">
+		for _, entry := range entries {
+			@Highlight(entry.Chapter, entry.Text, entry.Note, fmt.Sprintf("%d", entry.Page), fmt.Sprintf("%d", entry.Time))
+		}
+	</div>
+}
+
+templ Highlight(chapter, text, note, page, time string) {
+	<div class="pt-12">
+		<div class="text-3xl font-bold">{ chapter }</div>
+		<div class="text-3xl font-bold">{ text }</div>
+		<div class="text-3xl font-bold">{ note }</div>
+		<div class="text-3xl font-bold">{ page }</div>
+		<div class="text-3xl font-bold">{ time }</div>
+	</div>
+}

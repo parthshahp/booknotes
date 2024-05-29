@@ -32,8 +32,7 @@ func main() {
 		errorLog.Fatal(err)
 	}
 	defer db.CloseDB()
-
-	// api.InsertData(api.ImportTest(), db, &env)
+	db.InitDB()
 
 	c := cors.AllowAll()
 	handler := c.Handler(api.RoutesInit(&env, db))

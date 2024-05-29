@@ -3,7 +3,9 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"io"
 	"log"
+	"mime/multipart"
 	"os"
 	"strings"
 	"time"
@@ -12,6 +14,27 @@ import (
 	"github.com/parthshahp/booknotes/internal/db"
 	. "github.com/parthshahp/booknotes/internal/types"
 )
+
+func ImportHighlightData(f multipart.File, env *Env, db *db.DB) error {
+	var book BookImport
+
+	data, err := io.ReadAll(f)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to read file: %s", err)
+	}
+
+	err = json.Unmarshal(data, &book)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to unmarshal JSON: %s", err)
+	}
+
+	InsertData(book, db, env)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to insert data: %s", err)
+	}
+
+	return nil
+}
 
 func ImportTest() BookImport {
 	// Open JSON file

@@ -8418,10 +8418,6 @@ html:has(.drawer-open.drawer-open) {
   width: 8rem;
 }
 
-.w-96 {
-  width: 24rem;
-}
-
 .w-\[this-is\\\\\] {
   width: this-is\\;
 }
@@ -9319,6 +9315,10 @@ html:has(.drawer-open.drawer-open) {
 
 .rounded-lg {
   border-radius: 0.5rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
 }
 
 .rounded-b {

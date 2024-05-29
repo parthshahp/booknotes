@@ -193,9 +193,10 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
 	return books
 }
 
-func GetBookHighlights(db *db.DB, env *Env, bookID string) []Entry {
+func GetBookHighlights(db *db.DB, env *Env, bookID string) (string, []Entry) {
 	env.InfoLog.Println("Getting highlights")
 	query := `SELECT time, page, chapter, text, note FROM entries WHERE book_id = ? ORDER BY page DESC;`
+	queryName := `SELECT title FROM books WHERE id = ?;`
 	rows, err := db.Query(query, bookID)
 	if err != nil {
 		log.Fatalf("Failed to query entries: %s", err)
@@ -210,5 +211,16 @@ func GetBookHighlights(db *db.DB, env *Env, bookID string) []Entry {
 		}
 		entries = append(entries, entry)
 	}
-	return entries
+
+	var bookName string
+	rows, err = db.Query(queryName, bookID)
+	if err != nil {
+		log.Fatalf("Failed to query name: %s", err)
+	}
+	rows.Next()
+	if err := rows.Scan(&bookName); err != nil {
+		log.Fatalf("Failed to scan name: %s", err)
+	}
+
+	return bookName, entries
 }

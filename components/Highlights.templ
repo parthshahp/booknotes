@@ -29,18 +29,24 @@ templ Highlight(id, chapter, text, note, page, time string) {
 				<div class="">{ note }</div>
 				<div class="">Highlighted at { time }</div>
 				<div class="card-actions justify-end">
-					//<button hx-get="/highlights/edit/{ id }" class="btn btn-primary rounded-xl">Edit</button>
-					<button class="btn btn-primary rounded-xl" onclick={ showModalID(id) }>open modal</button>
+					<button class="btn btn-primary rounded-xl" onclick={ showModalID(id) }>Edit</button>
 					<dialog id={ id } class="modal">
 						<div class="modal-box w-11/12 max-w-5xl">
-							<h3 class="font-bold text-lg">Hello!</h3>
-							<p class="py-4">Click the button below to close</p>
-							<div class="modal-action">
-								<form method="dialog">
+							<h3 class="font-bold text-lg">Edit Highlight</h3>
+							<form method="dialog">
+								<p class="py-4">This is the modal for { id }</p>
+								@EditHighlight(chapter, text, note, page)
+								<div class="modal-action">
 									<!-- if there is a button, it will close the modal -->
-									<button class="btn">Close</button>
-								</form>
-							</div>
+									<button class="btn btn-warning rounded-xl">Delete</button>
+									<button
+										hx-post="/highlights/edit/{ id }"
+										hx-encoding="multipart/form-data"
+										class="btn btn-primary rounded-xl"
+									>Save</button>
+									<button class="btn btn-primary rounded-xl">Close</button>
+								</div>
+							</form>
 						</div>
 					</dialog>
 				</div>
@@ -55,7 +61,29 @@ func showModalID(id string) templ.ComponentScript {
 	return script
 }
 
-templ EditHighlight() {
-	<!-- You can open the modal using ID.showModal() method -->
-	<p>hello</p>
+templ EditHighlight(chapter, text, note, page string) {
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Chapter</span>
+		</label>
+		<input type="text" placeholder="Chapter" class="input input-bordered" value={ chapter }/>
+	</div>
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Page</span>
+		</label>
+		<input type="text" placeholder="Page" class="input input-bordered" value={ page }/>
+	</div>
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Text</span>
+		</label>
+		<textarea placeholder="Text" class="textarea textarea-bordered" value={ text }>{ text }</textarea>
+	</div>
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Note</span>
+		</label>
+		<textarea placeholder="Note" class="textarea textarea-bordered" value={ note }>{ note }</textarea>
+	</div>
 }

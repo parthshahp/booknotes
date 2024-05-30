@@ -88,3 +88,10 @@ func GetHighlights(env *Env, db *db.DB) http.HandlerFunc {
 		templ.Handler(ui.HighlightsPage(bookName, entries)).ServeHTTP(w, r)
 	})
 }
+
+func EditHighlight(env *Env) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving edit highlight")
+		templ.Handler(ui.EditHighlight()).ServeHTTP(w, r)
+	})
+}

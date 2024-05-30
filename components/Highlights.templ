@@ -12,13 +12,15 @@ templ HighlightsPage(bookName string, entries []Entry) {
 		</div>
 		<div class="pt-12">
 			for _, entry := range entries {
-				@Highlight(entry.Chapter, entry.Text, entry.Note, fmt.Sprintf("%d", entry.Page), fmt.Sprintf("%d", entry.Time))
+				@Highlight(fmt.Sprintf("%d", entry.ID), entry.Chapter, entry.Text, entry.Note, fmt.Sprintf("%d",
+					entry.Page), fmt.Sprintf("%d",
+					entry.Time))
 			}
 		</div>
 	</div>
 }
 
-templ Highlight(chapter, text, note, page, time string) {
+templ Highlight(id, chapter, text, note, page, time string) {
 	<div class="pt-12">
 		<div class="card w-full bg-base-100 shadow-xl">
 			<div class="card-body">
@@ -27,9 +29,33 @@ templ Highlight(chapter, text, note, page, time string) {
 				<div class="">{ note }</div>
 				<div class="">Highlighted at { time }</div>
 				<div class="card-actions justify-end">
-					<button class="btn btn-primary rounded-xl">Copy</button>
+					//<button hx-get="/highlights/edit/{ id }" class="btn btn-primary rounded-xl">Edit</button>
+					<button class="btn btn-primary rounded-xl" onclick={ showModalID(id) }>open modal</button>
+					<dialog id={ id } class="modal">
+						<div class="modal-box w-11/12 max-w-5xl">
+							<h3 class="font-bold text-lg">Hello!</h3>
+							<p class="py-4">Click the button below to close</p>
+							<div class="modal-action">
+								<form method="dialog">
+									<!-- if there is a button, it will close the modal -->
+									<button class="btn">Close</button>
+								</form>
+							</div>
+						</div>
+					</dialog>
 				</div>
 			</div>
 		</div>
 	</div>
+}
+
+func showModalID(id string) templ.ComponentScript {
+	var script templ.ComponentScript
+	script.Call = fmt.Sprintf("document.getElementById('%s').showModal();", id)
+	return script
+}
+
+templ EditHighlight() {
+	<!-- You can open the modal using ID.showModal() method -->
+	<p>hello</p>
 }

@@ -8414,6 +8414,10 @@ html:has(.drawer-open.drawer-open) {
   height: 100vh;
 }
 
+.w-11\/12 {
+  width: 91.666667%;
+}
+
 .w-32 {
   width: 8rem;
 }
@@ -8436,6 +8440,10 @@ html:has(.drawer-open.drawer-open) {
 
 .min-w-full {
   min-width: 100%;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
 }
 
 .max-w-xs {
@@ -9681,6 +9689,11 @@ html:has(.drawer-open.drawer-open) {
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .text-sm {

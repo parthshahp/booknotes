@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/a-h/templ"
 
@@ -89,9 +91,44 @@ func GetHighlights(env *Env, db *db.DB) http.HandlerFunc {
 	})
 }
 
-func EditHighlight(env *Env) http.HandlerFunc {
+func EditHighlight(env *Env, db *db.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		env.InfoLog.Println("Serving edit highlight")
-		// templ.Handler(ui.EditHighlight()).ServeHTTP(w, r)
+		pathID := r.PathValue("id")
+		// Create Entry
+		if pathID == "" {
+			http.Error(w, "No highlight ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("No highlight ID provided")
+			return
+		}
+		// Convert highlightID to int from string
+		highlightID, err := strconv.Atoi(pathID)
+		if err != nil {
+			http.Error(w, "Invalid highlight ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("Invalid highlight ID provided")
+			return
+		}
+
+		// Parse the form
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Unable to parse form", http.StatusBadRequest)
+			env.ErrorLog.Println("Error parsing form:", err)
+			return
+		}
+		updatedEntry := Entry{ID: highlightID}
+		updatedEntry.Page, err = strconv.Atoi(r.FormValue("page"))
+		if err != nil {
+			http.Error(w, "Invalid page number provided", http.StatusBadRequest)
+			env.ErrorLog.Println("Invalid page number provided")
+			return
+		}
+		updatedEntry.Chapter = r.FormValue("chapter")
+		updatedEntry.Text = r.FormValue("text")
+		updatedEntry.Note = r.FormValue("note")
+
+		updatedEntry = UpdateHighlight(db, env, updatedEntry)
+
+		templ.Handler(ui.Highlight(fmt.Sprintf("%d", updatedEntry.ID), updatedEntry.Chapter, updatedEntry.Text, updatedEntry.Note, fmt.Sprintf("%d", updatedEntry.Page), fmt.Sprintf("%d", updatedEntry.Time))).
+			ServeHTTP(w, r)
 	})
 }

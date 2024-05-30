@@ -28,10 +28,10 @@ templ BookTable(entries []Book) {
 	</div>
 }
 
-templ BookTableEntry(title, author, date, highlights, id string) {
+templ BookTableEntry(title, author, date, highlights, url string) {
 	<tr>
 		<td class="whitespace-nowrap px-4 py-2">
-			<a hx-get={ id } hx-target="#page-content" class="cursor-pointer">
+			<a hx-get={ url } hx-target="#page-content" class="cursor-pointer">
 				{ title }
 			</a>
 		</td>

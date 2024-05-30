@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
-	"os"
 	"strings"
 	"time"
 
@@ -34,23 +33,6 @@ func ImportHighlightData(f multipart.File, env *Env, db *db.DB) error {
 	}
 
 	return nil
-}
-
-func ImportTest() BookImport {
-	// Open JSON file
-	jsonFile, err := os.Open("/home/parth/test.json")
-	if err != nil {
-		log.Fatalf("Failed to open JSON file: %s", err)
-	}
-	defer jsonFile.Close()
-
-	// Decode JSON data
-	var book BookImport
-	decoder := json.NewDecoder(jsonFile)
-	if err := decoder.Decode(&book); err != nil {
-		log.Fatalf("Failed to decode JSON: %s", err)
-	}
-	return book
 }
 
 func InsertData(book BookImport, db *db.DB, env *Env) {
@@ -223,4 +205,33 @@ func GetBookHighlights(db *db.DB, env *Env, bookID string) (string, []Entry) {
 	}
 
 	return bookName, entries
+}
+
+func UpdateHighlight(db *db.DB, env *Env, highlight Entry) Entry {
+	query := `UPDATE entries SET page = ?, chapter = ?, text = ?, note = ? WHERE id = ?;`
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to prepare query: %s", err)
+	}
+	defer stmt.Close()
+
+	if _, err := stmt.Exec(highlight.Page, highlight.Chapter, highlight.Text, highlight.Note, highlight.ID); err != nil {
+		env.ErrorLog.Fatalf("Failed to update highlight: %s", err)
+	}
+
+	// Return the updated highlight from the db
+	query = `SELECT id, time, page, chapter, text, note FROM entries WHERE id = ?;`
+	rows, err := db.Query(query, highlight.ID)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to query entry: %s", err)
+	}
+	defer rows.Close()
+
+	var updatedEntry Entry
+	for rows.Next() {
+		if err := rows.Scan(&updatedEntry.ID, &updatedEntry.Time, &updatedEntry.Page, &updatedEntry.Chapter, &updatedEntry.Text, &updatedEntry.Note); err != nil {
+			env.ErrorLog.Fatalf("Failed to scan entry: %s", err)
+		}
+	}
+	return updatedEntry
 }

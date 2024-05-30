@@ -21,7 +21,7 @@ templ HighlightsPage(bookName string, entries []Entry) {
 }
 
 templ Highlight(id, chapter, text, note, page, time string) {
-	<div class="pt-12">
+	<div id={ getReplaceID(id) } class="pt-12">
 		<div class="card w-full bg-base-100 shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title">{ chapter }, Page { page }</h2>
@@ -33,18 +33,12 @@ templ Highlight(id, chapter, text, note, page, time string) {
 					<dialog id={ id } class="modal">
 						<div class="modal-box w-11/12 max-w-5xl">
 							<h3 class="font-bold text-lg">Edit Highlight</h3>
-							<form method="dialog">
-								<p class="py-4">This is the modal for { id }</p>
+							<form hx-post={ getPostURL(id) } hx-target={ replaceTargetID(id) } hx-swap="outerHTML">
 								@EditHighlight(chapter, text, note, page)
 								<div class="modal-action">
-									<!-- if there is a button, it will close the modal -->
-									<button class="btn btn-warning rounded-xl">Delete</button>
-									<button
-										hx-post="/highlights/edit/{ id }"
-										hx-encoding="multipart/form-data"
-										class="btn btn-primary rounded-xl"
-									>Save</button>
-									<button class="btn btn-primary rounded-xl">Close</button>
+									<button type="button" hx-delete={ getPostURL(id) } class="btn btn-warning rounded-xl">Delete</button>
+									<button type="submit" class="btn btn-primary rounded-xl">Save</button>
+									<button type="button" hx-get={ getPostURL(id) } class="btn btn-primary rounded-xl">Close</button>
 								</div>
 							</form>
 						</div>
@@ -61,29 +55,41 @@ func showModalID(id string) templ.ComponentScript {
 	return script
 }
 
+func getPostURL(id string) string {
+	return fmt.Sprintf("/highlights/edit/%s", id)
+}
+
+func replaceTargetID(id string) string {
+	return fmt.Sprintf("#%s", getReplaceID(id))
+}
+
+func getReplaceID(id string) string {
+	return fmt.Sprintf("replace-%s", id)
+}
+
 templ EditHighlight(chapter, text, note, page string) {
 	<div class="form-control">
 		<label class="label">
 			<span class="label-text">Chapter</span>
 		</label>
-		<input type="text" placeholder="Chapter" class="input input-bordered" value={ chapter }/>
+		<input type="text" name="chapter" placeholder="Chapter" class="input input-bordered" value={ chapter }/>
 	</div>
 	<div class="form-control">
 		<label class="label">
 			<span class="label-text">Page</span>
 		</label>
-		<input type="text" placeholder="Page" class="input input-bordered" value={ page }/>
+		<input type="text" name="page" placeholder="Page" class="input input-bordered" value={ page }/>
 	</div>
 	<div class="form-control">
 		<label class="label">
 			<span class="label-text">Text</span>
 		</label>
-		<textarea placeholder="Text" class="textarea textarea-bordered" value={ text }>{ text }</textarea>
+		<textarea placeholder="Text" name="text" class="textarea textarea-bordered" value={ text }>{ text }</textarea>
 	</div>
 	<div class="form-control">
 		<label class="label">
 			<span class="label-text">Note</span>
 		</label>
-		<textarea placeholder="Note" class="textarea textarea-bordered" value={ note }>{ note }</textarea>
+		<textarea placeholder="Note" name="note" class="textarea textarea-bordered" value={ note }>{ note }</textarea>
 	</div>
 }

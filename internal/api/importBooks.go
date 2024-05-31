@@ -199,6 +199,8 @@ func GetBookHighlights(db *db.DB, env *Env, bookID string) (string, []Entry) {
 	if err != nil {
 		log.Fatalf("Failed to query name: %s", err)
 	}
+	defer rows.Close()
+
 	rows.Next()
 	if err := rows.Scan(&bookName); err != nil {
 		log.Fatalf("Failed to scan name: %s", err)

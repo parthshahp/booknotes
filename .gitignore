@@ -5,4 +5,4 @@ components/*.go
 .env
 go.sum
 books.db
-./assets/output.css
+assets/output.css

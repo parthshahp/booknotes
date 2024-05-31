@@ -36,9 +36,16 @@ templ Highlight(id, chapter, text, note, page, time string) {
 							<form hx-post={ getPostURL(id) } hx-target={ replaceTargetID(id) } hx-swap="outerHTML">
 								@EditHighlight(chapter, text, note, page)
 								<div class="modal-action">
-									<button type="button" hx-delete={ getPostURL(id) } class="btn btn-warning rounded-xl">Delete</button>
+									<button
+										type="button"
+										hx-confirm="Are you sure?"
+										hx-delete={ getPostURL(id) }
+										hx-target={ replaceTargetID(id) }
+										hx-swap="outerHTML"
+										class="btn btn-error rounded-xl"
+									>Delete</button>
 									<button type="submit" class="btn btn-primary rounded-xl">Save</button>
-									<button type="button" hx-get={ getPostURL(id) } class="btn btn-primary rounded-xl">Close</button>
+									<button type="button" onclick={ hideModalID(id) } class="btn btn-primary rounded-xl">Close</button>
 								</div>
 							</form>
 						</div>
@@ -47,6 +54,12 @@ templ Highlight(id, chapter, text, note, page, time string) {
 			</div>
 		</div>
 	</div>
+}
+
+func hideModalID(id string) templ.ComponentScript {
+	var script templ.ComponentScript
+	script.Call = fmt.Sprintf("document.getElementById('%s').close();", id)
+	return script
 }
 
 func showModalID(id string) templ.ComponentScript {

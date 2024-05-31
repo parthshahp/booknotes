@@ -132,3 +132,26 @@ func EditHighlight(env *Env, db *db.DB) http.HandlerFunc {
 			ServeHTTP(w, r)
 	})
 }
+
+func DeleteHighlight(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving delete highlight")
+		pathID := r.PathValue("id")
+		if pathID == "" {
+			http.Error(w, "No highlight ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("No highlight ID provided")
+			return
+		}
+
+		query := `DELETE FROM entries WHERE id = ?;`
+		stmt, err := db.Prepare(query)
+		if err != nil {
+			env.ErrorLog.Fatalf("Failed to prepare query: %s", err)
+		}
+		defer stmt.Close()
+
+		if _, err := stmt.Exec(pathID); err != nil {
+			env.ErrorLog.Fatalf("Failed to delete highlight: %s", err)
+		}
+	})
+}

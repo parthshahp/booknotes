@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 
@@ -152,6 +153,58 @@ func DeleteHighlight(env *Env, db *db.DB) http.HandlerFunc {
 
 		if _, err := stmt.Exec(pathID); err != nil {
 			env.ErrorLog.Fatalf("Failed to delete highlight: %s", err)
+		}
+	})
+}
+
+func EditBook(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving edit book")
+		pathID := r.PathValue("id")
+		if pathID == "" {
+			http.Error(w, "No book ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("No book ID provided")
+			return
+		}
+
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Unable to parse form", http.StatusBadRequest)
+			env.ErrorLog.Println("Error parsing form:", err)
+			return
+		}
+
+		var authors []string
+		// Split authors by comma
+		for _, author := range strings.Split(r.FormValue("author"), ",") {
+			authors = append(authors, strings.TrimSpace(author))
+		}
+
+		UpdateBook(db, env, r.FormValue("title"), pathID, authors)
+
+		templ.Handler(ui.BookTable(GetAllBooks(db, env))).
+			ServeHTTP(w, r)
+	})
+}
+
+func DeleteBook(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving delete book")
+		pathID := r.PathValue("id")
+		if pathID == "" {
+			http.Error(w, "No book ID provided", http.StatusBadRequest)
+			env.ErrorLog.Println("No book ID provided")
+			return
+		}
+
+		query := `DELETE FROM books WHERE id = ?;`
+		stmt, err := db.Prepare(query)
+		if err != nil {
+			env.ErrorLog.Fatalf("Failed to prepare query: %s", err)
+		}
+		defer stmt.Close()
+
+		if _, err := stmt.Exec(pathID); err != nil {
+			env.ErrorLog.Fatalf("Failed to delete book: %s", err)
 		}
 	})
 }

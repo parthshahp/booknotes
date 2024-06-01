@@ -237,3 +237,32 @@ func UpdateHighlight(db *db.DB, env *Env, highlight Entry) Entry {
 	}
 	return updatedEntry
 }
+
+func UpdateBook(db *db.DB, env *Env, title, id string, authors []string) {
+	query := `UPDATE books SET title = ? WHERE id = ?;`
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to prepare query: %s", err)
+	}
+	defer stmt.Close()
+
+	if _, err := stmt.Exec(title, id); err != nil {
+		env.ErrorLog.Fatalf("Failed to update book: %s", err)
+	}
+
+	// Delete the original authors
+	query = `DELETE FROM authors WHERE book_id = ?;`
+	_, err = db.Exec(query, id)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to delete authors: %s", err)
+	}
+
+	// Add new authors
+	for _, author := range authors {
+		query = `INSERT INTO authors (book_id, name) VALUES (?, ?);`
+		_, err = db.Exec(query, id, author)
+		if err != nil {
+			env.ErrorLog.Fatalf("Failed to insert author: %s", err)
+		}
+	}
+}

@@ -19,19 +19,20 @@ templ BookTable(entries []Book) {
 					<th class="px-4 py-2"></th>
 				</tr>
 			</thead>
-			for _, entry := range entries {
-				@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
-					strconv.Itoa(entry.EntryCount), fmt.Sprintf("/highlights/%d", entry.ID))
-			}
-			<tbody class="divide-y divide-gray-200"></tbody>
+			<tbody class="divide-y divide-gray-200">
+				for _, entry := range entries {
+					@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
+						strconv.Itoa(entry.EntryCount), fmt.Sprintf("%d", entry.ID))
+				}
+			</tbody>
 		</table>
 	</div>
 }
 
-templ BookTableEntry(title, author, date, highlights, url string) {
-	<tr>
+templ BookTableEntry(title, author, date, highlights, id string) {
+	<tr id={ fmt.Sprintf("row-%s", id) }>
 		<td class="whitespace-nowrap px-4 py-2">
-			<a hx-get={ url } hx-target="#page-content" class="cursor-pointer">
+			<a hx-get={ fmt.Sprintf("/book/%s/highlights", id) } hx-target="#page-content" class="cursor-pointer">
 				{ title }
 			</a>
 		</td>
@@ -39,9 +40,48 @@ templ BookTableEntry(title, author, date, highlights, url string) {
 		<td class="whitespace-nowrap px-4 py-2">{ highlights }</td>
 		<td class="whitespace-nowrap px-4 py-2">{ date }</td>
 		<td class="whitespace-nowrap px-4 py-2">
-			<a href="#" class="btn btn-ghost rounded">
+			<button class="btn btn-ghost rounded" onclick={ showModalID(id) }>
 				Edit
-			</a>
+			</button>
+			@BookTableModal(title, author, id)
 		</td>
 	</tr>
+}
+
+templ BookTableModal(title, author, id string) {
+	<dialog id={ id } class="modal">
+		<div class="modal-box w-11/12 max-w-5xl">
+			<h3 class="font-bold text-lg">Edit Book Information</h3>
+			<form hx-post={ fmt.Sprintf("/book/%s", id) } hx-target="#page-content">
+				@EditBook(title, author)
+				<div class="modal-action mt-4">
+					<button
+						type="button"
+						hx-confirm="Are you sure?"
+						hx-delete={ fmt.Sprintf("/book/%s", id) }
+						hx-target={ fmt.Sprintf("#row-%s", id) }
+						hx-swap="outerHTML"
+						class="btn btn-error rounded-xl"
+					>Delete</button>
+					<button type="submit" class="btn btn-primary rounded-xl">Save</button>
+					<button type="button" onclick={ hideModalID(id) } class="btn btn-primary rounded-xl">Close</button>
+				</div>
+			</form>
+		</div>
+	</dialog>
+}
+
+templ EditBook(title, author string) {
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Title</span>
+		</label>
+		<input type="text" name="title" class="input input-bordered" value={ title }/>
+	</div>
+	<div class="form-control">
+		<label class="label">
+			<span class="label-text">Author(s)</span>
+		</label>
+		<input type="text" name="author" class="input input-bordered" value={ author }/>
+	</div>
 }

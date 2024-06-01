@@ -21,7 +21,7 @@ templ HighlightsPage(bookName string, entries []Entry) {
 }
 
 templ Highlight(id, chapter, text, note, page, time string) {
-	<div id={ getReplaceID(id) } class="pt-12">
+	<div id={ fmt.Sprintf("replace-%s", id) } class="pt-12">
 		<div class="card w-full bg-base-100 shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title">{ chapter }, Page { page }</h2>
@@ -33,14 +33,18 @@ templ Highlight(id, chapter, text, note, page, time string) {
 					<dialog id={ id } class="modal">
 						<div class="modal-box w-11/12 max-w-5xl">
 							<h3 class="font-bold text-lg">Edit Highlight</h3>
-							<form hx-post={ getPostURL(id) } hx-target={ replaceTargetID(id) } hx-swap="outerHTML">
+							<form
+								hx-post={ fmt.Sprintf("/highlights/edit/%s", id) }
+								hx-target={ fmt.Sprintf("#replace-%s", id) }
+								hx-swap="outerHTML"
+							>
 								@EditHighlight(chapter, text, note, page)
 								<div class="modal-action">
 									<button
 										type="button"
 										hx-confirm="Are you sure?"
-										hx-delete={ getPostURL(id) }
-										hx-target={ replaceTargetID(id) }
+										hx-delete={ fmt.Sprintf("/highlights/edit/%s", id) }
+										hx-target={ fmt.Sprintf("#replace-%s", id) }
 										hx-swap="outerHTML"
 										class="btn btn-error rounded-xl"
 									>Delete</button>
@@ -66,18 +70,6 @@ func showModalID(id string) templ.ComponentScript {
 	var script templ.ComponentScript
 	script.Call = fmt.Sprintf("document.getElementById('%s').showModal();", id)
 	return script
-}
-
-func getPostURL(id string) string {
-	return fmt.Sprintf("/highlights/edit/%s", id)
-}
-
-func replaceTargetID(id string) string {
-	return fmt.Sprintf("#%s", getReplaceID(id))
-}
-
-func getReplaceID(id string) string {
-	return fmt.Sprintf("replace-%s", id)
 }
 
 templ EditHighlight(chapter, text, note, page string) {

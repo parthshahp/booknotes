@@ -18,6 +18,7 @@ func main() {
 		log.Print("No .env file found")
 	}
 	addr := os.Getenv("LISTEN_ADDR")
+	loc := os.Getenv("DATABASE_LOCATION")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -27,7 +28,7 @@ func main() {
 		ErrorLog: errorLog,
 	}
 
-	db, err := db.OpenDB()
+	db, err := db.OpenDB(loc)
 	if err != nil {
 		errorLog.Fatal(err)
 	}

@@ -10,8 +10,8 @@ type DB struct {
 	*sql.DB
 }
 
-func OpenDB() (*DB, error) {
-	db, err := sql.Open("sqlite3", "./books.db")
+func OpenDB(loc string) (*DB, error) {
+	db, err := sql.Open("sqlite3", loc)
 	if err != nil {
 		return nil, err
 	}

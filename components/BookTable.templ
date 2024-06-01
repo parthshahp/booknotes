@@ -52,7 +52,7 @@ templ BookTableModal(title, author, id string) {
 	<dialog id={ id } class="modal">
 		<div class="modal-box w-11/12 max-w-5xl">
 			<h3 class="font-bold text-lg">Edit Book Information</h3>
-			<form hx-post={ fmt.Sprintf("/book/%s", id) } hx-target="#page-content">
+			<form hx-post={ fmt.Sprintf("/book/%s", id) } hx-target={ fmt.Sprintf("#row-%s", id) } hx-swap="outerHTML">
 				@EditBook(title, author)
 				<div class="modal-action mt-4">
 					<button

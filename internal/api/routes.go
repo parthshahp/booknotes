@@ -180,8 +180,16 @@ func EditBook(env *Env, db *db.DB) http.HandlerFunc {
 		}
 
 		UpdateBook(db, env, r.FormValue("title"), pathID, authors)
-
-		templ.Handler(ui.BookTable(GetAllBooks(db, env))).
+		book := GetBook(db, env, pathID)
+		templ.Handler(
+			ui.BookTableEntry(
+				book.Title,
+				strings.Join(book.Authors, ", "),
+				book.TimeCreatedOn.Format("2006-01-02"),
+				strconv.Itoa(book.EntryCount),
+				fmt.Sprintf("%d", book.ID),
+			),
+		).
 			ServeHTTP(w, r)
 	})
 }
@@ -205,6 +213,17 @@ func DeleteBook(env *Env, db *db.DB) http.HandlerFunc {
 
 		if _, err := stmt.Exec(pathID); err != nil {
 			env.ErrorLog.Fatalf("Failed to delete book: %s", err)
+		}
+
+		query = `DELETE FROM book_authors WHERE book_id = ?;`
+		stmt, err = db.Prepare(query)
+		if err != nil {
+			env.ErrorLog.Fatalf("Failed to prepare query: %s", err)
+		}
+		defer stmt.Close()
+
+		if _, err := stmt.Exec(pathID); err != nil {
+			env.ErrorLog.Fatalf("Failed to delete authors: %s", err)
 		}
 	})
 }

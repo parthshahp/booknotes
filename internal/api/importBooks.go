@@ -114,6 +114,54 @@ func TestQuery(db *db.DB, env *Env) {
 	}
 }
 
+func GetBook(db *db.DB, env *Env, bookID string) Book {
+	query := `
+  SELECT 
+    b.id, 
+    b.created_on,
+    b.number_of_pages,
+    b.title, 
+    a.authors,
+    COUNT(e.id) AS entry_count
+  FROM books b
+  LEFT JOIN
+    (SELECT ba.book_id, GROUP_CONCAT(a.name) AS authors
+    FROM book_authors ba
+    JOIN authors a ON ba.author_id = a.id
+    GROUP BY ba.book_id) a ON b.id = a.book_id
+  LEFT JOIN
+    entries e ON b.id = e.book_id
+  WHERE b.id = ?
+  GROUP BY b.id
+  ORDER BY b.created_on DESC;
+  `
+
+	var id int
+	var createdOn int64
+	var numberOfPages int
+	var title string
+	var authors string
+	var entryCount int
+	err := db.QueryRow(query, bookID).
+		Scan(&id, &createdOn, &numberOfPages, &title, &authors, &entryCount)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to query book: %s", err)
+	}
+	authorList := strings.Split(authors, ",")
+
+	env.InfoLog.Println(authors)
+
+	book := Book{
+		ID:            id,
+		TimeCreatedOn: time.Unix(createdOn, 0),
+		NumberOfPages: numberOfPages,
+		Title:         title,
+		EntryCount:    entryCount,
+		Authors:       authorList,
+	}
+	return book
+}
+
 func GetAllBooks(db *db.DB, env *Env) []Book {
 	env.InfoLog.Println("Getting all books")
 	// TestQuery(db, env)

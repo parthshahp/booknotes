@@ -251,18 +251,40 @@ func UpdateBook(db *db.DB, env *Env, title, id string, authors []string) {
 	}
 
 	// Delete the original authors
-	query = `DELETE FROM authors WHERE book_id = ?;`
+	query = `DELETE FROM book_authors WHERE book_id = ?;`
 	_, err = db.Exec(query, id)
 	if err != nil {
 		env.ErrorLog.Fatalf("Failed to delete authors: %s", err)
 	}
 
-	// Add new authors
 	for _, author := range authors {
-		query = `INSERT INTO authors (book_id, name) VALUES (?, ?);`
-		_, err = db.Exec(query, id, author)
-		if err != nil {
-			env.ErrorLog.Fatalf("Failed to insert author: %s", err)
+		// Check if author already exists
+		var authorID int64
+		queryAuthor := `SELECT id FROM authors WHERE name = ?`
+		err = db.QueryRow(queryAuthor, author).Scan(&authorID)
+		if err != nil && err != sql.ErrNoRows {
+			env.ErrorLog.Fatalf("Failed to query author: %s", err)
+		}
+
+		if err == sql.ErrNoRows {
+			// Insert author if not exists
+			insertAuthor := `INSERT INTO authors (name) VALUES (?)`
+			res, err := db.Exec(insertAuthor, author)
+			if err != nil {
+				env.ErrorLog.Fatalf("Failed to insert author data: %s", err)
+			}
+
+			// Get the author_id of the inserted author
+			authorID, err = res.LastInsertId()
+			if err != nil {
+				env.ErrorLog.Fatalf("Failed to get last insert id: %s", err)
+			}
+		}
+
+		// Link book and author
+		insertBookAuthor := `INSERT INTO book_authors (book_id, author_id) VALUES (?, ?)`
+		if _, err := db.Exec(insertBookAuthor, id, authorID); err != nil {
+			env.ErrorLog.Fatalf("Failed to insert book_author data: %s", err)
 		}
 	}
 }

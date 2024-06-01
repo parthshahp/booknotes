@@ -20,10 +20,11 @@ func Index(env *Env) http.HandlerFunc {
 	})
 }
 
-func Hello(env *Env) http.HandlerFunc {
+func Home(env *Env) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		env.InfoLog.Println("Serving hello")
-		templ.Handler(ui.Hello("Hi there!")).ServeHTTP(w, r)
+		w.Header().Add("HX-Redirect", "/")
+		w.WriteHeader(http.StatusSeeOther)
+		env.InfoLog.Println("Serving home")
 	})
 }
 

@@ -12,16 +12,10 @@ templ Page() {
 		<body id="page-body" class="bg-zinc-100">
 			<div class="flex flex-col">
 				@Navbar()
-				<div id="page-content" class="w-full flex justify-center">
-					@Hello("😒")
-				</div>
+				<div id="page-content" class="w-full flex justify-center"></div>
 			</div>
 		</body>
 	</html>
-}
-
-templ Hello(name string) {
-	<div class="pt-12">Hello, { name }</div>
 }
 
 templ Import() {

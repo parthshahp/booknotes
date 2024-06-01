@@ -16,7 +16,7 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 	mux.Handle("/assets/", http.StripPrefix("/assets", fs))
 
 	mux.HandleFunc("/", Index(env))
-	mux.HandleFunc("GET /hello", Hello(env))
+	mux.HandleFunc("GET /home", Home(env))
 	mux.HandleFunc("GET /table", Table(env, db))
 	mux.HandleFunc("GET /import", ImportPage(env))
 	mux.HandleFunc("POST /import", ImportFile(env, db))

@@ -11,10 +11,10 @@ templ BookTable(entries []Book) {
 	if len(entries) == 0 {
 		<div class="py-4 flex flex-col">
 			<div>
-				You haven't added any books yet!
+				You haven't added any books yet,
 			</div>
 			<div>
-				Go to the
+				go to the
 				<a class="link link-primary" hx-get="/import" hx-push-url="/import" hx-target="#page-content">
 					import
 					page

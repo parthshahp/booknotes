@@ -13,20 +13,22 @@ import (
 	. "github.com/parthshahp/booknotes/internal/types"
 )
 
-func Index(env *Env) http.HandlerFunc {
+func Index(env *Env, db *db.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		env.InfoLog.Println("Serving index")
-		templ.Handler(ui.Page()).ServeHTTP(w, r)
+		// templ.Handler(ui.Page()).ServeHTTP(w, r)
+		books := GetAllBooks(db, env)
+		templ.Handler(ui.Page(books)).ServeHTTP(w, r)
 	})
 }
 
-func Home(env *Env) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("HX-Redirect", "/")
-		w.WriteHeader(http.StatusSeeOther)
-		env.InfoLog.Println("Serving home")
-	})
-}
+// func Home(env *Env) http.HandlerFunc {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Add("HX-Redirect", "/")
+// 		w.WriteHeader(http.StatusSeeOther)
+// 		env.InfoLog.Println("Serving home")
+// 	})
+// }
 
 func Table(env *Env, db *db.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

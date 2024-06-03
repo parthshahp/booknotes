@@ -3,12 +3,12 @@ package components
 templ Navbar() {
 	<div class="navbar bg-base-100">
 		<div class="flex-1">
-			<a hx-get="/home" hx-push-url="/" class="btn btn-ghost text-3xl">Highlight Viewer</a>
+			<a hx-get="/table" class="btn btn-ghost text-3xl" hx-target="#page-content">Highlight Viewer</a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1">
-				<li><a hx-get="/table" hx-push-url="/table" hx-target="#page-content">Books</a></li>
-				<li><a hx-get="/import" hx-push-url="/import" hx-target="#page-content">Import</a></li>
+				<li><a hx-get="/table" hx-target="#page-content">Books</a></li>
+				<li><a hx-get="/import" hx-target="#page-content">Import</a></li>
 			</ul>
 		</div>
 	</div>

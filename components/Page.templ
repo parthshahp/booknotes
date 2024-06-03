@@ -1,6 +1,10 @@
 package components
 
-templ Page() {
+import (
+	. "github.com/parthshahp/booknotes/internal/types"
+)
+
+templ Page(books []Book) {
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
@@ -12,7 +16,9 @@ templ Page() {
 		<body id="page-body" class="bg-zinc-100">
 			<div class="flex flex-col">
 				@Navbar()
-				<div id="page-content" class="w-full flex justify-center"></div>
+				<div id="page-content" class="w-full flex justify-center">
+					@BookTable(books)
+				</div>
 			</div>
 		</body>
 	</html>

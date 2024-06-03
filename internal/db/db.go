@@ -53,6 +53,12 @@ func (db DB) InitDB() error {
     note TEXT,
 		FOREIGN KEY (book_id) REFERENCES books (id)
 	);
+  CREATE TABLE IF NOT EXISTS book_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      book_id INTEGER,
+      image BLOB,
+      FOREIGN KEY (book_id) REFERENCES books (id)
+  );
 	`
 	if _, err := db.Exec(createTables); err != nil {
 		panic(err)

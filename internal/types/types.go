@@ -12,7 +12,7 @@ type Env struct {
 
 type Entry struct {
 	ID      int
-	Time    uint64 `json:"time"`
+	Time    int64  `json:"time"`
 	Page    int    `json:"page"`
 	Chapter string `json:"chapter"`
 	Text    string `json:"text"`

@@ -1,6 +1,7 @@
 package components
 
 import (
+	"time"
 	"fmt"
 	. "github.com/parthshahp/booknotes/internal/types"
 )
@@ -13,21 +14,23 @@ templ HighlightsPage(bookName string, entries []Entry) {
 		<div class="pt-12">
 			for _, entry := range entries {
 				@Highlight(fmt.Sprintf("%d", entry.ID), entry.Chapter, entry.Text, entry.Note, fmt.Sprintf("%d",
-					entry.Page), fmt.Sprintf("%d",
-					entry.Time))
+					entry.Page), time.Unix(entry.Time, 0).Format("2006-01-02"),
+				)
 			}
 		</div>
 	</div>
 }
 
-templ Highlight(id, chapter, text, note, page, time string) {
+templ Highlight(id, chapter, text, note, page, createdOn string) {
 	<div id={ fmt.Sprintf("replace-%s", id) } class="pt-12">
 		<div class="card w-full bg-base-100 shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title">{ chapter }, Page { page }</h2>
 				<div class="italic">{ text }</div>
 				<div class="">{ note }</div>
-				<div class="">Highlighted at { time }</div>
+				<div class="">
+					Highlighted on { createdOn }
+				</div>
 				<div class="card-actions justify-end">
 					<button class="btn btn-primary rounded-xl" onclick={ showModalID(id) }>Edit</button>
 					<dialog id={ id } class="modal">

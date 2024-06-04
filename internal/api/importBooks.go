@@ -162,32 +162,64 @@ func GetBook(db *db.DB, env *Env, bookID string) Book {
 	return book
 }
 
-func GetAllBooks(db *db.DB, env *Env) []Book {
+func GetAllBooks(db *db.DB, env *Env, search string) []Book {
 	env.InfoLog.Println("Getting all books")
-	// TestQuery(db, env)
-	query := `
-  SELECT 
-    b.id, 
-    b.created_on,
-    b.number_of_pages,
-    b.title, 
-    a.authors,
-    COUNT(e.id) AS entry_count
-  FROM books b
-  LEFT JOIN
-    (SELECT ba.book_id, GROUP_CONCAT(a.name) AS authors
-    FROM book_authors ba
-    JOIN authors a ON ba.author_id = a.id
-    GROUP BY ba.book_id) a ON b.id = a.book_id
-  LEFT JOIN
-    entries e ON b.id = e.book_id
-  GROUP BY b.id
-  ORDER BY b.created_on DESC;
-  `
+	var rows *sql.Rows
+	var err error
 
-	rows, err := db.Query(query)
-	if err != nil {
-		log.Fatalf("Failed to query books: %s", err)
+	if search == "" {
+
+		query := `
+      SELECT 
+        b.id, 
+        b.created_on,
+        b.number_of_pages,
+        b.title, 
+        a.authors,
+        COUNT(e.id) AS entry_count
+      FROM books b
+      LEFT JOIN
+        (SELECT ba.book_id, GROUP_CONCAT(a.name) AS authors
+        FROM book_authors ba
+        JOIN authors a ON ba.author_id = a.id
+        GROUP BY ba.book_id) a ON b.id = a.book_id
+      LEFT JOIN
+        entries e ON b.id = e.book_id
+      GROUP BY b.id
+      ORDER BY b.created_on DESC;
+    `
+
+		rows, err = db.Query(query)
+		if err != nil {
+			log.Fatalf("Failed to query books: %s", err)
+		}
+	} else {
+
+		query := `
+      SELECT 
+        b.id, 
+        b.created_on,
+        b.number_of_pages,
+        b.title, 
+        a.authors,
+        COUNT(e.id) AS entry_count
+      FROM books b
+      LEFT JOIN
+        (SELECT ba.book_id, GROUP_CONCAT(a.name) AS authors
+        FROM book_authors ba
+        JOIN authors a ON ba.author_id = a.id
+        GROUP BY ba.book_id) a ON b.id = a.book_id
+      LEFT JOIN
+        entries e ON b.id = e.book_id
+      WHERE b.title LIKE ? or a.authors LIKE ?
+      GROUP BY b.id
+      ORDER BY b.created_on DESC;
+    `
+
+		rows, err = db.Query(query, "%"+search+"%", "%"+search+"%")
+		if err != nil {
+			log.Fatalf("Failed to query books: %s", err)
+		}
 	}
 	defer rows.Close()
 
@@ -206,8 +238,6 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
 
 		authorList := strings.Split(authors, ",")
 
-		env.InfoLog.Println(authors)
-
 		book := Book{
 			ID:            bookID,
 			TimeCreatedOn: time.Unix(createdOn, 0),
@@ -216,7 +246,6 @@ func GetAllBooks(db *db.DB, env *Env) []Book {
 			EntryCount:    entryCount,
 			Authors:       authorList,
 		}
-		env.InfoLog.Println(book.Title)
 		books = append(books, book)
 	}
 

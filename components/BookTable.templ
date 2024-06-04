@@ -11,37 +11,46 @@ templ BookTable(entries []Book) {
 	if len(entries) == 0 {
 		<div class="py-4 flex flex-col">
 			<div>
-				You haven't added any books yet,
-			</div>
-			<div>
-				go to the
-				<a class="link link-primary" hx-get="/import" hx-push-url="/import" hx-target="#page-content">
-					import
-					page
-				</a> to add some!
+				"No Books Found!"
 			</div>
 		</div>
 	} else {
 		<div class="py-4">
-			<table class="border-2 min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-				<thead class="ltr:text-left">
-					<tr>
-						<th class="whitespace-nowrap px-4 py-2 font-medium">Title</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium">Author(s)</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium">Highlights</th>
-						<th class="whitespace-nowrap px-4 py-2 font-medium">Date</th>
-						<th class="px-4 py-2"></th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-200">
-					for _, entry := range entries {
-						@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
-							strconv.Itoa(entry.EntryCount), fmt.Sprintf("%d", entry.ID))
-					}
-				</tbody>
-			</table>
+			<input
+				class="form-control border-2 input input-sm input-bordered rounded-md my-4"
+				type="search"
+				name="search"
+				placeholder="Search Books..."
+				hx-post="/table/search"
+				hx-trigger="input changed delay:500ms, search"
+				hx-target="#search-results"
+				hx-swap="innerHTML"
+			/>
+			<div id="search-results">
+				@BookTableTable(entries)
+			</div>
 		</div>
 	}
+}
+
+templ BookTableTable(entries []Book) {
+	<table class="border-2 min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
+		<thead class="ltr:text-left">
+			<tr>
+				<th class="whitespace-nowrap px-4 py-2 font-medium">Title</th>
+				<th class="whitespace-nowrap px-4 py-2 font-medium">Author(s)</th>
+				<th class="whitespace-nowrap px-4 py-2 font-medium">Highlights</th>
+				<th class="whitespace-nowrap px-4 py-2 font-medium">Date</th>
+				<th class="px-4 py-2"></th>
+			</tr>
+		</thead>
+		<tbody class="divide-y divide-gray-300">
+			for _, entry := range entries {
+				@BookTableEntry(entry.Title, strings.Join(entry.Authors, ", "), entry.TimeCreatedOn.Format("2006-01-02"),
+					strconv.Itoa(entry.EntryCount), fmt.Sprintf("%d", entry.ID))
+			}
+		</tbody>
+	</table>
 }
 
 templ BookTableEntry(title, author, date, highlights, id string) {

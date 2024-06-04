@@ -17,7 +17,7 @@ func Index(env *Env, db *db.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		env.InfoLog.Println("Serving index")
 		// templ.Handler(ui.Page()).ServeHTTP(w, r)
-		books := GetAllBooks(db, env)
+		books := GetAllBooks(db, env, "")
 		templ.Handler(ui.Page(books)).ServeHTTP(w, r)
 	})
 }
@@ -32,7 +32,7 @@ func Index(env *Env, db *db.DB) http.HandlerFunc {
 
 func Table(env *Env, db *db.DB) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		books := GetAllBooks(db, env)
+		books := GetAllBooks(db, env, "")
 		env.InfoLog.Println("Serving table")
 		templ.Handler(ui.BookTable(books)).ServeHTTP(w, r)
 	})
@@ -228,5 +228,15 @@ func DeleteBook(env *Env, db *db.DB) http.HandlerFunc {
 		if _, err := stmt.Exec(pathID); err != nil {
 			env.ErrorLog.Fatalf("Failed to delete authors: %s", err)
 		}
+	})
+}
+
+func SearchBookTable(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving search book table")
+		query := r.FormValue("search")
+		env.InfoLog.Println("Search query:", query)
+		books := GetAllBooks(db, env, query)
+		templ.Handler(ui.BookTableTable(books)).ServeHTTP(w, r)
 	})
 }

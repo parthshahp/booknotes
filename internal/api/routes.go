@@ -1,7 +1,9 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -73,7 +75,19 @@ func ImportFile(env *Env, db *db.DB) http.HandlerFunc {
 			}
 			defer file.Close()
 
-			ImportHighlightData(file, env, db)
+			var book BookImport
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				env.ErrorLog.Fatalf("Failed to read file: %s", err)
+			}
+
+			err = json.Unmarshal(data, &book)
+			if err != nil {
+				env.ErrorLog.Fatalf("Failed to unmarshal JSON: %s", err)
+			}
+
+			InsertData(book, db, env)
 		}
 
 		w.WriteHeader(http.StatusOK)

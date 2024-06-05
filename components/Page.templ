@@ -20,6 +20,9 @@ templ Page(books []Book) {
 					@BookTable(books)
 				</div>
 			</div>
+			<div class="fixed bottom-0 left-0 text-center w-full">
+				@Footer()
+			</div>
 		</body>
 	</html>
 }
@@ -35,4 +38,12 @@ templ Import() {
 			</div>
 		</form>
 	</div>
+}
+
+templ Footer() {
+	<footer class="footer items-center p-4 bg-zinc-100 text-base-content">
+		<aside class="items-center grid-flow-col">
+			//<p>Parth Shah © 2024</p>
+		</aside>
+	</footer>
 }

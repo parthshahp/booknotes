@@ -37,6 +37,7 @@ templ BookTableTable(entries []Book) {
 	<table class="border-2 min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
 		<thead class="ltr:text-left">
 			<tr>
+				<th class="whitespace-nowrap px-4 py-2 font-medium">Cover</th>
 				<th class="whitespace-nowrap px-4 py-2 font-medium">Title</th>
 				<th class="whitespace-nowrap px-4 py-2 font-medium">Author(s)</th>
 				<th class="whitespace-nowrap px-4 py-2 font-medium">Highlights</th>
@@ -55,6 +56,7 @@ templ BookTableTable(entries []Book) {
 
 templ BookTableEntry(title, author, date, highlights, id string) {
 	<tr id={ fmt.Sprintf("row-%s", id) }>
+		<td class="whitespace-nowrap px-4 py-2"><img src="/assets/blank.jpg" height="100" width="100"/></td>
 		<td class="whitespace-nowrap px-4 py-2">
 			<a hx-get={ fmt.Sprintf("/book/%s/highlights", id) } hx-target="#page-content" class="cursor-pointer">
 				{ title }

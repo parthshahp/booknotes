@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -29,6 +30,8 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 
 	mux.HandleFunc("POST /highlights/edit/{id}", EditHighlight(env, db))
 	mux.HandleFunc("DELETE /highlights/edit/{id}", DeleteHighlight(env, db))
+	mux.HandleFunc("GET /handleExport/{type}/{id}", Export(env))
+	mux.HandleFunc("GET /export/markdown/{id}", ExportMarkdown(env, db))
 
 	return logger(mux)
 }
@@ -46,5 +49,17 @@ func logger(next http.Handler) http.Handler {
 			r.URL.Path,
 			end.Sub(start),
 		)
+	})
+}
+
+func Export(env *Env) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving export")
+		exportType := r.PathValue("type")
+		id := r.PathValue("id")
+
+		// Redirect to the export page
+		w.Header().Add("HX-Redirect", fmt.Sprintf("/export/%s/%s", exportType, id))
+		w.WriteHeader(http.StatusSeeOther)
 	})
 }

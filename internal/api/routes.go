@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/a-h/templ"
 
@@ -146,7 +147,7 @@ func EditHighlight(env *Env, db *db.DB) http.HandlerFunc {
 
 		updatedEntry = UpdateHighlight(db, env, updatedEntry)
 
-		templ.Handler(ui.Highlight(fmt.Sprintf("%d", updatedEntry.ID), updatedEntry.Chapter, updatedEntry.Text, updatedEntry.Note, fmt.Sprintf("%d", updatedEntry.Page), fmt.Sprintf("%d", updatedEntry.Time))).
+		templ.Handler(ui.Highlight(fmt.Sprintf("%d", updatedEntry.ID), updatedEntry.Chapter, updatedEntry.Text, updatedEntry.Note, fmt.Sprintf("%d", updatedEntry.Page), time.Unix(updatedEntry.Time, 0).Format("2006-01-02"))).
 			ServeHTTP(w, r)
 	})
 }

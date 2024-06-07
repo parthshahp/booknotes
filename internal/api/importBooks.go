@@ -2,7 +2,6 @@ package api
 
 import (
 	"database/sql"
-	"os"
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -80,25 +79,4 @@ func InsertData(book BookImport, db *db.DB, env *Env) error {
 	env.InfoLog.Println("Data inserted successfully")
 
 	return nil
-}
-
-func AddImage(db *db.DB, env *Env, bookID string, imagePath string) {
-	imageBytes, err := os.ReadFile(imagePath)
-	if err != nil {
-		env.ErrorLog.Fatalf("Failed to read image file: %s", err)
-	}
-
-	query := `INSERT INTO book_images (book_id, image) VALUES (?, ?);`
-	_, err = db.Exec(query, bookID, imageBytes)
-}
-
-func RetrieveImage(db *db.DB, env *Env, bookID string) []byte {
-	var image []byte
-	query := `SELECT image FROM book_images WHERE book_id = ?;`
-	err := db.QueryRow(query, bookID).Scan(&image)
-	if err != nil {
-		env.ErrorLog.Fatalf("Failed to query image: %s", err)
-	}
-
-	return image
 }

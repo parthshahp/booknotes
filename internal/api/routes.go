@@ -248,3 +248,21 @@ func SearchBookTable(env *Env, db *db.DB) http.HandlerFunc {
 		templ.Handler(ui.BookTableTable(books)).ServeHTTP(w, r)
 	})
 }
+
+func SearchHighlightsPage(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving highlights")
+		templ.Handler(ui.HighlightsSearch()).ServeHTTP(w, r)
+	})
+}
+
+func SearchHighlights(env *Env, db *db.DB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		env.InfoLog.Println("Serving search highlights")
+		query := r.FormValue("search")
+		env.InfoLog.Println("Search query:", query)
+		highlights := SearchAllHighlights(db, env, query)
+		env.InfoLog.Println("Found", len(highlights), "highlights")
+		templ.Handler(ui.HighlightResults(highlights)).ServeHTTP(w, r)
+	})
+}

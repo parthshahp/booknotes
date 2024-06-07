@@ -69,3 +69,25 @@ func UpdateHighlight(db *db.DB, env *Env, highlight Entry) Entry {
 	}
 	return updatedEntry
 }
+
+func SearchAllHighlights(db *db.DB, env *Env, search string) []Entry {
+	env.InfoLog.Println("Searching highlights in DB")
+	searchQuery := "%" + search + "%"
+	query := `SELECT id, time, page, chapter, text, note FROM entries WHERE text LIKE ? ORDER BY page DESC;`
+	rows, err := db.Query(query, searchQuery)
+	if err != nil {
+		env.ErrorLog.Fatalf("Failed to query entries: %s", err)
+	}
+	defer rows.Close()
+
+	var entries []Entry
+	for rows.Next() {
+		var entry Entry
+		if err := rows.Scan(&entry.ID, &entry.Time, &entry.Page, &entry.Chapter, &entry.Text, &entry.Note); err != nil {
+			env.ErrorLog.Fatalf("Failed to scan entry: %s", err)
+		}
+		env.InfoLog.Println("Entry Found:", entry)
+		entries = append(entries, entry)
+	}
+	return entries
+}

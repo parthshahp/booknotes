@@ -122,3 +122,32 @@ templ EditHighlight(chapter, text, note, page string) {
 		<textarea placeholder="Note" name="note" class="textarea textarea-bordered" value={ note }>{ note }</textarea>
 	</div>
 }
+
+templ HighlightsSearch() {
+	<div class="flex flex-col items-center justify-center">
+		<div class="flex flex-col items-center justify-center py-4">
+			<div class="text-3xl font-bold">Search Highlights</div>
+			<input
+				class="form-control border-2 input input-md input-bordered rounded-md my-6"
+				type="search"
+				name="search"
+				placeholder="Search for highlights..."
+				hx-post="/highlights/search"
+				hx-trigger="input changed delay:500ms, search"
+				hx-target="#search-results"
+				hx-swap="innerHTML"
+			/>
+			<div class="flex flex-col items-center justify-center" id="search-results">
+				@HighlightResults([]Entry{})
+			</div>
+		</div>
+	</div>
+}
+
+templ HighlightResults(entries []Entry) {
+	for _, entry := range entries {
+		<div>
+			{ fmt.Sprintf("%+v", entry) }
+		</div>
+	}
+}

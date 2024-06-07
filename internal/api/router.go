@@ -27,6 +27,8 @@ func RoutesInit(env *Env, db *db.DB) http.Handler {
 	mux.HandleFunc("DELETE /book/{id}", DeleteBook(env, db))
 	mux.HandleFunc("GET /book/{id}/highlights", GetHighlights(env, db))
 
+	mux.HandleFunc("GET /highlights", SearchHighlightsPage(env, db))
+	mux.HandleFunc("POST /highlights/search", SearchHighlights(env, db))
 	mux.HandleFunc("POST /highlights/edit/{id}", EditHighlight(env, db))
 	mux.HandleFunc("DELETE /highlights/edit/{id}", DeleteHighlight(env, db))
 	mux.HandleFunc("GET /handleExport/{type}/{id}", Export(env))

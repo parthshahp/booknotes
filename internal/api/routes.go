@@ -97,8 +97,9 @@ func GetHighlights(env *Env, db *db.DB) http.HandlerFunc {
 			env.ErrorLog.Println("No book ID provided")
 			return
 		}
-		bookName, entries := GetBookHighlights(db, env, bookID)
-		templ.Handler(ui.HighlightsPage(bookName, entries, bookID)).ServeHTTP(w, r)
+		entries := GetBookHighlights(db, env, bookID)
+		book := GetBook(db, env, bookID)
+		templ.Handler(ui.HighlightsPage(book, entries, bookID)).ServeHTTP(w, r)
 	})
 }
 

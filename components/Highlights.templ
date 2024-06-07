@@ -3,19 +3,34 @@ package components
 import (
 	"time"
 	"fmt"
+	"strings"
 	. "github.com/parthshahp/booknotes/internal/types"
 )
 
-templ HighlightsPage(bookName string, entries []Entry, bookID string) {
+templ HighlightsPage(book Book, entries []Entry, bookID string) {
 	<div class="flex flex-col items-center justify-center">
 		<div class="text-3xl font-bold pt-12">
-			{ bookName }
+			{ book.Title }
 		</div>
-		<div class="pt-12">
-			<button hx-get={ fmt.Sprintf("/handleExport/markdown/%s", bookID) } class="btn btn-primary rounded-lg btn-xs">
-				Export to
-				Markdown
-			</button>
+		<div class="text-sm mt-2">
+			{ strings.Join(book.Authors, ", ") }
+		</div>
+		<div class="text-sm mt-2">
+			{ fmt.Sprintf("Number of Highlights: %d", book.EntryCount) }
+		</div>
+		<div class="flex justify-center">
+			<div class="pt-12 mx-2">
+				<button hx-get={ fmt.Sprintf("/handleExport/markdown/%s", bookID) } class="btn btn-primary rounded-lg btn-xs">
+					Export to
+					Anki
+				</button>
+			</div>
+			<div class="pt-12 mx-2">
+				<button hx-get={ fmt.Sprintf("/handleExport/markdown/%s", bookID) } class="btn btn-primary rounded-lg btn-xs">
+					Export to
+					Markdown
+				</button>
+			</div>
 		</div>
 		<div class="pt-12">
 			for _, entry := range entries {

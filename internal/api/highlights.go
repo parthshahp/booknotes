@@ -7,7 +7,7 @@ import (
 	. "github.com/parthshahp/booknotes/internal/types"
 )
 
-func GetBookHighlights(db *db.DB, env *Env, bookID string) (string, []Entry) {
+func GetBookHighlights(db *db.DB, env *Env, bookID string) []Entry {
 	env.InfoLog.Println("Getting highlights")
 	query := `SELECT id, time, page, chapter, text, note FROM entries WHERE book_id = ? ORDER BY page DESC;`
 	queryName := `SELECT title FROM books WHERE id = ?;`
@@ -38,7 +38,7 @@ func GetBookHighlights(db *db.DB, env *Env, bookID string) (string, []Entry) {
 		log.Fatalf("Failed to scan name: %s", err)
 	}
 
-	return bookName, entries
+	return entries
 }
 
 func UpdateHighlight(db *db.DB, env *Env, highlight Entry) Entry {

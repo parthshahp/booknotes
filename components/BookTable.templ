@@ -118,6 +118,12 @@ templ EditBook(title, author string) {
 		</label>
 		<input type="text" name="author" class="input input-bordered" value={ author }/>
 	</div>
+	<div class="form-control mt-4">
+		<label class="label" for="cover-image">
+			<span class="label-text">Cover Image</span>
+		</label>
+		<input type="file" name="cover-image" class="file-input file-input-bordered" accept="image/*"/>
+	</div>
 }
 
 templ TableSortHeader(column string) {
